@@ -1,5 +1,5 @@
 "use strict";
-//Lesson 18.1
+//Lesson 20
 
 window.addEventListener("DOMContentLoaded", () => {
     function countTimer(deadline) {
@@ -58,20 +58,18 @@ window.addEventListener("DOMContentLoaded", () => {
 
     //Меню
     const toggleMenu = () => {
-        const btnMenu = document.querySelector(".menu"),
-            menu = document.querySelector("menu"),
-            closeBtn = document.querySelector(".close-btn"),
-            menuItems = menu.querySelectorAll("ul>li");
+        const bodyHandler = document.querySelector("BODY"),
+            menu = document.querySelector("menu");
 
-        const actionMenu = () => {
-            menu.classList.toggle("active-menu");
-        };
-        btnMenu.addEventListener("click", actionMenu);
+        bodyHandler.addEventListener("click", element => {
+            const target = element.target;
 
-        closeBtn.addEventListener("click", actionMenu);
+            if (target.closest(".menu")) {
+                menu.classList.add("active-menu");
+            } else if (!target.closest(".active-menu") ||  target.matches(".close-btn") || target.matches("a")) {
+                menu.classList.remove("active-menu");
+            }
 
-        menuItems.forEach(elem => {
-            elem.addEventListener("click", actionMenu);
         });
     };
 
@@ -81,8 +79,20 @@ window.addEventListener("DOMContentLoaded", () => {
     const togglePopup = () => {
         const popup = document.querySelector(".popup"),
             popupBtns = document.querySelectorAll(".popup-btn"),
-            popupClose = document.querySelector(".popup-close"),
             popupWindow = document.querySelector(".popup-content");
+
+        popup.addEventListener("click", event => {
+            let target = event.target;
+
+            if (target.classList.contains("popup-close")) {
+                popup.style.display = "none";
+            } else {
+                target = target.closest(".popup-content");
+                if (!target) {
+                    popup.style.display = "none";
+                }
+            }
+        });
 
         popupBtns.forEach(elem => {
             elem.addEventListener("click", () => {
@@ -109,11 +119,38 @@ window.addEventListener("DOMContentLoaded", () => {
                 }
             });
         });
-
-        popupClose.addEventListener("click", () => {
-            popup.style.display = "none";
-        });
     };
 
     togglePopup();
+
+    //Табы
+    const tabs = () => {
+        const tabHeader = document.querySelector(".service-header"),
+            tab = tabHeader.querySelectorAll(".service-header-tab"),
+            tabContent = document.querySelectorAll(".service-tab");
+        const toggleTabContent = index => {
+            for (let i = 0; i < tabContent.length; i++) {
+                if (index === i) {
+                    tab[i].classList.add("active");
+                    tabContent[i].classList.remove("d-none");
+                } else {
+                    tab[i].classList.remove("active");
+                    tabContent[i].classList.add("d-none");
+                }
+            }
+        };
+        tabHeader.addEventListener("click", event => {
+            let target = event.target;
+            target = target.closest(".service-header-tab"); //Ищет ближайший к ребенку класс родителя
+            if (target) {
+                tab.forEach((item, i) => {
+                    if (item === target) {
+                        toggleTabContent(i);
+                    }
+                });
+            }
+        });
+    };
+
+    tabs();
 });
