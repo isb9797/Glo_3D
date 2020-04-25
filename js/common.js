@@ -1,5 +1,5 @@
 "use strict";
-//Lesson 21
+//Lesson 22
 
 window.addEventListener("DOMContentLoaded", () => {
     function countTimer(deadline) {
@@ -264,4 +264,42 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     slider();
+
+    const changePhotoCommand = () => {
+        const photoCommandContainer = document.querySelector("#command");
+        let targetSrc;
+        photoCommandContainer.addEventListener("mouseover", event => {
+            const target = event.target;
+            targetSrc = target.src;
+
+            if (target.classList.contains("command__photo")) {
+                target.src = target.dataset.img;
+            }
+        });
+
+        photoCommandContainer.addEventListener("mouseout", event => {
+            const target = event.target;
+
+            if (target.classList.contains("command__photo")) {
+                target.src = targetSrc;
+            }
+        });
+    };
+
+    changePhotoCommand();
+
+    const checkInput = () => {
+        const calcBlock = document.querySelector(".calc-block");
+
+        calcBlock.addEventListener("input", event => {
+            const target = event.target;
+
+            if (target.classList.contains("calc-item") && target.matches("input")) {
+                const text = target.value;
+                target.value = text.replace(/\d{4}/, '');
+            }
+        });
+    };
+
+    checkInput();
 });
