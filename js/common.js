@@ -318,6 +318,7 @@ window.addEventListener("DOMContentLoaded", () => {
         const countSum = () => {
 
             let total = 0,
+                countAnimate = 0,
                 countValue = 1,
                 // eslint-disable-next-line no-unused-vars
                 dayValue = 1;
@@ -334,14 +335,27 @@ window.addEventListener("DOMContentLoaded", () => {
                 dayValue *= 1.5;
             }
 
-            
+
 
 
             if (typeValue && squareValue) {
                 total = price * typeValue * squareValue * countValue;
             }
 
-            totalValue.textContent = total;
+    //Анимация для калькулятора
+            const animateTotal = () => {
+                countAnimate += 10;
+                totalValue.textContent = countAnimate;
+
+                if (countAnimate < total) {
+                    requestAnimationFrame(animateTotal);
+                }
+            };
+
+            requestAnimationFrame(animateTotal);
+
+
+
         };
         calcBlock.addEventListener('change', event => {
             const target = event.target;
