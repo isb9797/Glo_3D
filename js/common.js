@@ -1,6 +1,6 @@
 /* eslint-disable eqeqeq */
 "use strict";
-//Lesson 25
+//? Lesson 25
 
 
 
@@ -404,9 +404,29 @@ window.addEventListener("DOMContentLoaded", () => {
             popupForm = document.getElementById('form3');
 
         //? ввод номера телефона
-        maskPhone('#form1-phone');
+        /* maskPhone('#form1-phone');
         maskPhone('#form2-phone');
-        maskPhone('#form3-phone');
+        maskPhone('#form3-phone'); */
+
+        const phoneChecker = (formId, selectorId) => {
+            formId.addEventListener('input', event => {
+                const target = event.target;
+                if (target.matches(`#${selectorId}`)) {
+                    const text = target.value;
+
+                    const regExp = /[+0-9]/;
+
+                    if (text.match(regExp) === null) {
+
+                        target.value = text.replace(/[A-Za-zА-ЯЁа-яё */=~\-:\%\;\№\#\@\!^`]/, '');
+                    }
+
+                }
+            });
+
+        };
+
+        phoneChecker(form, 'form1-phone');
 
         const statusMessage = document.createElement('div');
         statusMessage.style.cssText = 'font-size: 2rem;';
