@@ -302,7 +302,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
             if (target.classList.contains("calc-item") && target.matches("input")) {
                 const text = target.value;
-                target.value = text.replace(/\d/, '');
+                target.value = text.replace(/\d{10}/, '');
             }
         });
     };
@@ -339,6 +339,8 @@ window.addEventListener("DOMContentLoaded", () => {
 
         const countSum = () => {
 
+
+
             let total = 0,
                 countAnimate = 0,
                 countValue = 1,
@@ -346,25 +348,23 @@ window.addEventListener("DOMContentLoaded", () => {
             const typeValue = +calcType.options[calcType.selectedIndex].value,
                 squareValue = +calcSquare.value;
 
+            if (squareValue === '' && calcDay === '' && calcCount === '') {
+                totalValue.textContent = 0;
+            }
+
             if (calcCount.value > 1) {
                 countValue += (calcCount.value - 1) / 10;
             }
 
             if (calcDay.value && calcDay.value < 5) {
                 dayValue *= 2;
-            } else if (calcDay.value && calcDay < 10) {
+            } else if (calcDay.value && calcDay.value < 10) {
                 dayValue *= 1.5;
-            }
-
-
-
-
-            if (typeValue && squareValue) {
-                total = price * typeValue * squareValue * countValue * dayValue;
             }
 
             //Анимация для калькулятора
             const animateTotal = () => {
+
 
                 countAnimate += 10;
                 totalValue.textContent = countAnimate;
@@ -374,7 +374,22 @@ window.addEventListener("DOMContentLoaded", () => {
                 }
             };
 
-            requestAnimationFrame(animateTotal);
+
+
+            if (typeValue && squareValue) {
+                total = price * typeValue * squareValue * countValue * dayValue;
+                requestAnimationFrame(animateTotal);
+            }
+
+
+
+            totalValue.textContent = 0;
+
+
+
+
+
+
 
 
 
