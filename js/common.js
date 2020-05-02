@@ -2,8 +2,6 @@
 "use strict";
 //? Lesson 25
 
-
-
 window.addEventListener("DOMContentLoaded", () => {
     function countTimer(deadline) {
         const timerHours = document.querySelector("#timer-hours"),
@@ -302,7 +300,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
             if (target.classList.contains("calc-item") && target.matches("input")) {
                 const text = target.value;
-                target.value = text.replace(/\d{10}/, '');
+                target.value = text.replace(/\d{10}/, "");
             }
         });
     };
@@ -310,37 +308,30 @@ window.addEventListener("DOMContentLoaded", () => {
     const checkInputWord = selector => {
         const searchBlocks = document.querySelectorAll(selector);
 
-
         searchBlocks.forEach(elem => {
-
             elem.addEventListener("input", event => {
                 const target = event.target;
 
-
                 const text = target.value;
 
-                target.value = text.replace(/[A-Za-z\d^!@#$%^&*()_"]$/, '');
-
+                target.value = text.replace(/[A-Za-z\d^!@#$%^&*()_"]$/, "");
             });
         });
     };
 
     checkInputNum();
-    checkInputWord('#form1-name, #form2-name, #form3-name, .mess');
+    checkInputWord("#form1-name, #form2-name, #form3-name, .mess");
 
     //Калькулятор на сайте
     const calc = (price = 100) => {
-        const calcBlock = document.querySelector('.calc-block'),
-            calcType = document.querySelector('.calc-type'),
-            calcSquare = document.querySelector('.calc-square'),
-            calcDay = document.querySelector('.calc-day'),
-            calcCount = document.querySelector('.calc-count'),
-            totalValue = document.getElementById('total');
+        const calcBlock = document.querySelector(".calc-block"),
+            calcType = document.querySelector(".calc-type"),
+            calcSquare = document.querySelector(".calc-square"),
+            calcDay = document.querySelector(".calc-day"),
+            calcCount = document.querySelector(".calc-count"),
+            totalValue = document.getElementById("total");
 
         const countSum = () => {
-
-
-
             let total = 0,
                 countAnimate = 0,
                 countValue = 1,
@@ -348,7 +339,7 @@ window.addEventListener("DOMContentLoaded", () => {
             const typeValue = +calcType.options[calcType.selectedIndex].value,
                 squareValue = +calcSquare.value;
 
-            if (squareValue === '' && calcDay === '' && calcCount === '') {
+            if (squareValue === "" && calcDay === "" && calcCount === "") {
                 totalValue.textContent = 0;
             }
 
@@ -364,8 +355,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
             //Анимация для калькулятора
             const animateTotal = () => {
-
-
                 countAnimate += 10;
                 totalValue.textContent = countAnimate;
 
@@ -374,31 +363,17 @@ window.addEventListener("DOMContentLoaded", () => {
                 }
             };
 
-
-
             if (typeValue && squareValue) {
                 total = price * typeValue * squareValue * countValue * dayValue;
                 requestAnimationFrame(animateTotal);
             }
 
-
-
             totalValue.textContent = 0;
-
-
-
-
-
-
-
-
-
         };
-        calcBlock.addEventListener('change', event => {
+        calcBlock.addEventListener("change", event => {
             const target = event.target;
 
-
-            if (target.matches('select') || target.matches('input')) {
+            if (target.matches("select") || target.matches("input")) {
                 countSum();
             }
         });
@@ -408,15 +383,15 @@ window.addEventListener("DOMContentLoaded", () => {
 
     //send-ajax-form
     const sendForm = () => {
-        const errorMessage = 'Что то пошло не так ',
+        const errorMessage = "Что то пошло не так ",
             // TODO Переделать под прелоадер
-            loadMessage = 'Загрузка...',
-            successMessage = 'Спасибо! Мы с вами скоро свяжемся';
+            loadMessage = "Загрузка...",
+            successMessage = "Спасибо! Мы с вами скоро свяжемся";
 
         //Получение форм
-        const form = document.getElementById('form1'),
-            bottomForm = document.getElementById('form2'),
-            popupForm = document.getElementById('form3');
+        const form = document.getElementById("form1"),
+            bottomForm = document.getElementById("form2"),
+            popupForm = document.getElementById("form3");
 
         //? ввод номера телефона
         /* maskPhone('#form1-phone');
@@ -424,7 +399,7 @@ window.addEventListener("DOMContentLoaded", () => {
         maskPhone('#form3-phone'); */
 
         const phoneChecker = (formId, selectorId) => {
-            formId.addEventListener('input', event => {
+            formId.addEventListener("input", event => {
                 const target = event.target;
                 if (target.matches(`#${selectorId}`)) {
                     const text = target.value;
@@ -432,24 +407,25 @@ window.addEventListener("DOMContentLoaded", () => {
                     const regExp = /[+0-9]/;
 
                     if (text.match(regExp) === null) {
-
-                        target.value = text.replace(/[A-Za-zА-ЯЁа-яё */=~\-:\%\;\№\#\@\!^`]/, '');
+                        target.value = text.replace(
+                            /[A-Za-zА-ЯЁа-яё */=~\-:\%\;\№\#\@\!^`]/,
+                            ""
+                        );
                     }
-
                 }
             });
-
         };
 
-        phoneChecker(form, 'form1-phone');
+        phoneChecker(form, "form1-phone");
+        phoneChecker(form, "form2-phone");
+        phoneChecker(form, "form3-phone");
 
-        const statusMessage = document.createElement('div');
-        statusMessage.style.cssText = 'font-size: 2rem;';
+        const statusMessage = document.createElement("div");
+        statusMessage.style.cssText = "font-size: 2rem;";
 
         const postData = (body, outputData, errorData) => {
             const request = new XMLHttpRequest();
-            request.addEventListener('readystatechange', () => {
-
+            request.addEventListener("readystatechange", () => {
                 if (request.readyState !== 4) {
                     return;
                 }
@@ -461,15 +437,14 @@ window.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
-            request.open('POST', '../server.php');
-            request.setRequestHeader('Content-Type', 'application/json');
-
+            request.open("POST", "../server.php");
+            request.setRequestHeader("Content-Type", "application/json");
 
             //** Отправляем данные на сервак */
             request.send(JSON.stringify(body));
         };
 
-        form.addEventListener('submit', event => {
+        form.addEventListener("submit", event => {
             event.preventDefault();
             form.appendChild(statusMessage);
             statusMessage.textContent = loadMessage;
@@ -482,25 +457,26 @@ window.addEventListener("DOMContentLoaded", () => {
                 body[key] = val;
             });
 
-            postData(body, () => {
-                statusMessage.textContent = successMessage;
-                //? Очистка полей после успешной отправки данных на сервер
-                form.querySelectorAll('input').forEach(el => {
-                    el.value = '';
-                });
-
-
-            }, error => {
-                statusMessage.textContent = errorMessage;
-                console.error(error);
-
-            });
+            postData(
+                body,
+                () => {
+                    statusMessage.textContent = successMessage;
+                    //? Очистка полей после успешной отправки данных на сервер
+                    form.querySelectorAll("input").forEach(el => {
+                        el.value = "";
+                    });
+                },
+                error => {
+                    statusMessage.textContent = errorMessage;
+                    console.error(error);
+                }
+            );
         });
 
-        popupForm.addEventListener('submit', event => {
+        popupForm.addEventListener("submit", event => {
             event.preventDefault();
             popupForm.appendChild(statusMessage);
-            statusMessage.style.cssText = 'font-size: 1.5 rem; color: #fff';
+            statusMessage.style.cssText = "font-size: 1.5 rem; color: #fff";
             statusMessage.textContent = loadMessage;
 
             const formData = new FormData(popupForm);
@@ -511,20 +487,23 @@ window.addEventListener("DOMContentLoaded", () => {
                 body[key] = val;
             });
 
-            postData(body, () => {
-                statusMessage.textContent = successMessage;
-                //? Очистка полей после успешной отправки данных на сервер
-                popupForm.querySelectorAll('input').forEach(el => {
-                    el.value = '';
-                });
-            }, error => {
-                statusMessage.textContent = errorMessage;
-                console.error(error);
-
-            });
+            postData(
+                body,
+                () => {
+                    statusMessage.textContent = successMessage;
+                    //? Очистка полей после успешной отправки данных на сервер
+                    popupForm.querySelectorAll("input").forEach(el => {
+                        el.value = "";
+                    });
+                },
+                error => {
+                    statusMessage.textContent = errorMessage;
+                    console.error(error);
+                }
+            );
         });
 
-        bottomForm.addEventListener('submit', event => {
+        bottomForm.addEventListener("submit", event => {
             event.preventDefault();
             bottomForm.appendChild(statusMessage);
             statusMessage.textContent = loadMessage;
@@ -537,27 +516,22 @@ window.addEventListener("DOMContentLoaded", () => {
                 body[key] = val;
             });
 
-            postData(body, () => {
-                statusMessage.textContent = successMessage;
-                //? Очистка полей после успешной отправки данных на сервер
-                bottomForm.querySelectorAll('input').forEach(el => {
-                    el.value = '';
-                });
-            }, error => {
-                statusMessage.textContent = errorMessage;
-                console.error(error);
-
-            });
+            postData(
+                body,
+                () => {
+                    statusMessage.textContent = successMessage;
+                    //? Очистка полей после успешной отправки данных на сервер
+                    bottomForm.querySelectorAll("input").forEach(el => {
+                        el.value = "";
+                    });
+                },
+                error => {
+                    statusMessage.textContent = errorMessage;
+                    console.error(error);
+                }
+            );
         });
-
-
-
-
-
     };
 
     sendForm();
-
 });
-
-
