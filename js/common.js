@@ -305,16 +305,52 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     };
 
-    const checkInputWord = selector => {
+    const phoneChecker = selector => {
         const searchBlocks = document.querySelectorAll(selector);
 
         searchBlocks.forEach(elem => {
+            elem.setAttribute("autocomplete", "off");
             elem.addEventListener("input", event => {
                 const target = event.target;
 
                 const text = target.value;
 
-                target.value = text.replace(/[A-Za-z\d^!@#$%^&*()_"]$/, "");
+                const regExp = /[+0-9]$/;
+
+                if (regExp.test(text)) {
+                    return false;
+                } else {
+                    target.value = target.value.slice(0, -1);
+                }
+            });
+
+            elem.addEventListener("change", event => {
+                const target = event.target;
+                const regExp = /[+0-9]$/;
+                if (!regExp.test(target.value)) {
+                    target.value = "";
+                }
+            });
+        });
+    };
+
+    const checkInputWord = selector => {
+        const searchBlocks = document.querySelectorAll(selector);
+
+        searchBlocks.forEach(elem => {
+            elem.setAttribute("autocomplete", "off");
+            elem.addEventListener("input", event => {
+                const target = event.target;
+
+                const text = target.value;
+
+                const regExp = /[A-Za-z\d^!@#$%^&*()_"]$/;
+
+                if (!regExp.test(text)) {
+                    console.log(1);
+                } else {
+                    target.value = target.value.slice(0, -1);
+                }
             });
         });
     };
@@ -398,27 +434,7 @@ window.addEventListener("DOMContentLoaded", () => {
         maskPhone('#form2-phone');
         maskPhone('#form3-phone'); */
 
-        const phoneChecker = (formId, selectorId) => {
-            formId.addEventListener("input", event => {
-                const target = event.target;
-                if (target.matches(`#${selectorId}`)) {
-                    const text = target.value;
-
-                    const regExp = /[+0-9]/;
-
-                    if (text.match(regExp) === null) {
-                        target.value = text.replace(
-                            /[A-Za-zА-ЯЁа-яё */=~\-:\%\;\№\#\@\!^`]/,
-                            ""
-                        );
-                    }
-                }
-            });
-        };
-
-        phoneChecker(form, "form1-phone");
-        phoneChecker(form, "form2-phone");
-        phoneChecker(form, "form3-phone");
+        phoneChecker(".form-phone");
 
         const statusMessage = document.createElement("div");
         statusMessage.style.cssText = "font-size: 2rem;";
