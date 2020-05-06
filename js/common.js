@@ -305,6 +305,7 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     };
 
+    //! Функция проверки номера больше не нужна
     const phoneChecker = selector => {
         const searchBlocks = document.querySelectorAll(selector);
 
@@ -315,7 +316,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
                 const text = target.value;
 
-                const regExp = /[+0-9]$/;
+                const regExp = /[+0-9]$/g;
 
                 if (regExp.test(text)) {
                     return false;
@@ -326,14 +327,14 @@ window.addEventListener("DOMContentLoaded", () => {
 
             elem.addEventListener("change", event => {
                 const target = event.target;
-                const regExp = /[+0-9]$/;
+                const regExp = /[+0-9]$/g;
                 if (!regExp.test(target.value)) {
                     target.value = "";
                 }
             });
         });
     };
-
+    //!
     const checkInputWord = selector => {
         const searchBlocks = document.querySelectorAll(selector);
 
@@ -344,12 +345,20 @@ window.addEventListener("DOMContentLoaded", () => {
 
                 const text = target.value;
 
-                const regExp = /[A-Za-z\d^!@#$%^&*()_"]$/;
+                const regExp = /[A-Za-z\d^!@#$%&*()_:"]$/g;
 
                 if (!regExp.test(text)) {
-                    console.log(1);
+                    return false;
                 } else {
                     target.value = target.value.slice(0, -1);
+                }
+            });
+
+            elem.addEventListener("change", event => {
+                const target = event.target;
+                const regExp = /^[A-Za-z^!@#$%&*()_:"][0-9]$/g;
+                if (regExp.test(target.value)) {
+                    target.value = "";
                 }
             });
         });
@@ -419,133 +428,191 @@ window.addEventListener("DOMContentLoaded", () => {
 
     //send-ajax-form
     const sendForm = () => {
-        const errorMessage = "Что то пошло не так ",
-            // TODO Переделать под прелоадер
+        const errorMessage = "Что-то пошло не так...",
             loadMessage = "Загрузка...",
-            successMessage = "Спасибо! Мы с вами скоро свяжемся";
+            successMessage = "Спасибо! Мы скоро с вами свяжемся!";
 
-        //Получение форм
-        const form = document.getElementById("form1"),
-            bottomForm = document.getElementById("form2"),
-            popupForm = document.getElementById("form3");
+        const forms = document.querySelectorAll("form");
+        const bodyHtml = document.querySelector("body");
 
-        //? ввод номера телефона
-        /* maskPhone('#form1-phone');
-        maskPhone('#form2-phone');
-        maskPhone('#form3-phone'); */
-
-        phoneChecker(".form-phone");
+        //? Генерирую прелоадер из скомпилированого SCSS
+        const loader = () => `
+            <style>
+            .preloader__container {
+                position: fixed;
+                background-color: rgba(0, 0, 0, 0.8);
+                height: 100%;
+                width: 100%;
+                z-index: 10;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-around;
+                align-content: space-around;
+                top: 0;
+            }
+            
+            .sk-folding-cube {
+                width: 4em;
+                height: 4em;
+                position: relative;
+                margin: auto;
+                transform: rotateZ(45deg);
+            }
+            
+            .sk-folding-cube .sk-cube {
+                float: left;
+                width: 50%;
+                height: 50%;
+                position: relative;
+                transform: scale(1.1);
+            }
+            
+            .sk-folding-cube .sk-cube:before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: #337ab7;
+                animation: sk-folding-cube-angle 2.4s infinite linear both;
+                transform-origin: 100% 100%;
+            }
+            
+            .sk-folding-cube .sk-cube-2 {
+                transform: scale(1.1) rotateZ(90deg);
+            }
+            
+            .sk-folding-cube .sk-cube-3 {
+                transform: scale(1.1) rotateZ(180deg);
+            }
+            
+            .sk-folding-cube .sk-cube-4 {
+                transform: scale(1.1) rotateZ(270deg);
+            }
+            
+            .sk-folding-cube .sk-cube-2:before {
+                animation-delay: 0.3s;
+            }
+            
+            .sk-folding-cube .sk-cube-3:before {
+                animation-delay: 0.6s;
+            }
+            
+            .sk-folding-cube .sk-cube-4:before {
+                animation-delay: 0.9s;
+            }
+            
+            @keyframes sk-folding-cube-angle {
+                0%, 10% {
+                    transform: perspective(140px) rotateX(-180deg);
+                    opacity: 0;
+                }
+            
+                25%, 75% {
+                    transform: perspective(140px) rotateX(0deg);
+                    opacity: 1;
+                }
+            
+                90%, 100% {
+                    transform: perspective(140px) rotateY(180deg);
+                    opacity: 0;
+                }
+            }
+			</style>
+			<section></section>
+			<div class="preloader">
+				<div class="preloader__container">
+                    <div class='sk-folding-cube'>
+                        <div class='sk-cube sk-cube-1'></div>
+                        <div class='sk-cube sk-cube-2'></div>
+                        <div class='sk-cube sk-cube-3'></div>
+                        <div class='sk-cube sk-cube-4'></div>
+                    </div>
+				</div>
+			</div>
+			`;
 
         const statusMessage = document.createElement("div");
-        statusMessage.style.cssText = "font-size: 2rem;";
+        statusMessage.classList.add("status-message");
+        statusMessage.style.cssText = "font-size: 2rem; color: #fff";
 
-        const postData = (body, outputData, errorData) => {
-            const request = new XMLHttpRequest();
-            request.addEventListener("readystatechange", () => {
-                if (request.readyState !== 4) {
-                    return;
-                }
+        //? Метод для общения с сервером и передачи данных формы (Принимает данные в обычном формате и отправляет JSON)
+        const postData = body =>
+            new Promise((resolve, reject) => {
+                const request = new XMLHttpRequest();
 
-                if (request.status === 200) {
-                    outputData();
-                } else {
-                    errorData(request.status);
-                }
+                request.addEventListener("readystatechange", () => {
+                    if (request.readyState !== 4) {
+                        return;
+                    }
+                    if (request.status === 200) {
+                        resolve();
+                    } else {
+                        reject(request.status);
+                    }
+                });
+
+                request.open("POST", "./server.php");
+                request.setRequestHeader("Content-Type", "application/json");
+
+                request.send(JSON.stringify(body));
             });
 
-            request.open("POST", "../server.php");
-            request.setRequestHeader("Content-Type", "application/json");
-
-            //** Отправляем данные на сервак */
-            request.send(JSON.stringify(body));
+        //? Форма удаляю сообщение о статусе
+        const removeStatusMessage = () => {
+            const status = document.querySelector(".status-message");
+            if (!status) return;
+            setTimeout(() => {
+                status.remove();
+            }, 5000);
         };
 
-        form.addEventListener("submit", event => {
-            event.preventDefault();
-            form.appendChild(statusMessage);
-            statusMessage.textContent = loadMessage;
+        //? Добавляю слушателей для форм
+        forms.forEach(form => {
+            form.addEventListener("input", event => {
+                const target = event.target;
+                if (target.name === "user_phone") {
+                    target.value = target.value.replace(/[^+\d]/g, "");
+                }
 
-            const formData = new FormData(form);
-            const body = {};
-
-            //** Генерим JSON */
-            formData.forEach((val, key) => {
-                body[key] = val;
+                if (target.name === "user_name" || target.name === "user_message") {
+                    target.value = target.value.replace(/[^а-яА-Я ]/gi, "");
+                }
             });
 
-            postData(
-                body,
-                () => {
+            form.addEventListener("submit", event => {
+                event.preventDefault();
+                form.insertAdjacentElement("beforeend", statusMessage);
+                //! Можно выключить, но есть уже прелоадер
+                statusMessage.textContent = loadMessage;
+                //!
+                bodyHtml.insertAdjacentHTML("beforeend", loader());
+                const loaderHtml = document.querySelector(".preloader");
+
+                const formData = new FormData(form);
+                const body = {};
+                formData.forEach((val, key) => {
+                    body[key] = val;
+                });
+
+                const outputData = () => {
+                    removeStatusMessage();
                     statusMessage.textContent = successMessage;
-                    //? Очистка полей после успешной отправки данных на сервер
-                    form.querySelectorAll("input").forEach(el => {
-                        el.value = "";
-                    });
-                },
-                error => {
+                    form.reset();
+                    loaderHtml.remove();
+                };
+
+                const error = () => {
+                    removeStatusMessage();
                     statusMessage.textContent = errorMessage;
                     console.error(error);
-                }
-            );
-        });
+                    loaderHtml.remove();
+                };
 
-        popupForm.addEventListener("submit", event => {
-            event.preventDefault();
-            popupForm.appendChild(statusMessage);
-            statusMessage.style.cssText = "font-size: 1.5 rem; color: #fff";
-            statusMessage.textContent = loadMessage;
-
-            const formData = new FormData(popupForm);
-            const body = {};
-
-            //** Генерим JSON */
-            formData.forEach((val, key) => {
-                body[key] = val;
+                //? Выполняю отправку данных на сервер
+                postData(body).then(outputData).catch(error);
             });
-
-            postData(
-                body,
-                () => {
-                    statusMessage.textContent = successMessage;
-                    //? Очистка полей после успешной отправки данных на сервер
-                    popupForm.querySelectorAll("input").forEach(el => {
-                        el.value = "";
-                    });
-                },
-                error => {
-                    statusMessage.textContent = errorMessage;
-                    console.error(error);
-                }
-            );
-        });
-
-        bottomForm.addEventListener("submit", event => {
-            event.preventDefault();
-            bottomForm.appendChild(statusMessage);
-            statusMessage.textContent = loadMessage;
-
-            const formData = new FormData(bottomForm);
-            const body = {};
-
-            //** Генерим JSON */
-            formData.forEach((val, key) => {
-                body[key] = val;
-            });
-
-            postData(
-                body,
-                () => {
-                    statusMessage.textContent = successMessage;
-                    //? Очистка полей после успешной отправки данных на сервер
-                    bottomForm.querySelectorAll("input").forEach(el => {
-                        el.value = "";
-                    });
-                },
-                error => {
-                    statusMessage.textContent = errorMessage;
-                    console.error(error);
-                }
-            );
         });
     };
 
