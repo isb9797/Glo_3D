@@ -538,26 +538,19 @@ window.addEventListener("DOMContentLoaded", () => {
         statusMessage.style.cssText = "font-size: 2rem; color: #fff";
 
         //? Метод для общения с сервером и передачи данных формы (Принимает данные в обычном формате и отправляет JSON)
-        const postData = body =>
-            new Promise((resolve, reject) => {
-                const request = new XMLHttpRequest();
+        //! Теперь с помощью fetch
 
-                request.addEventListener("readystatechange", () => {
-                    if (request.readyState !== 4) {
-                        return;
-                    }
-                    if (request.status === 200) {
-                        resolve();
-                    } else {
-                        reject(request.status);
-                    }
-                });
+        const url = './server1.php';
 
-                request.open("POST", "./server.php");
-                request.setRequestHeader("Content-Type", "application/json");
-
-                request.send(JSON.stringify(body));
-            });
+        const postData = body => fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body),
+            credentials: 'include'
+        });
+        //!
 
         //? Форма удаляю сообщение о статусе
         const removeStatusMessage = () => {
@@ -584,7 +577,7 @@ window.addEventListener("DOMContentLoaded", () => {
             form.addEventListener("submit", event => {
                 event.preventDefault();
                 form.insertAdjacentElement("beforeend", statusMessage);
-                //! Можно выключить, но есть уже прелоадер
+                //! Можно выключить, есть уже прелоадер
                 statusMessage.textContent = loadMessage;
                 //!
                 bodyHtml.insertAdjacentHTML("beforeend", loader());
@@ -611,7 +604,19 @@ window.addEventListener("DOMContentLoaded", () => {
                 };
 
                 //? Выполняю отправку данных на сервер
-                postData(body).then(outputData).catch(error);
+                postData(body).then(outputData => {
+                    if (outputData.status !== 200) {
+                        setTimeout(() => {
+                            document.querySelector('.preloader__container').style.display = 'none';
+                        }, 3000);
+                        
+                        throw new Error('Status is not OK');
+                    }
+                }).catch(error => {
+                    statusMessage.textContent = errorMessage;
+                    console.error(error);
+                    
+                });
             });
         });
     };
