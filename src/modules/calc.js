@@ -46,7 +46,7 @@ const calcBlock = document.querySelector(".calc-block"),
         }, 20);
 
         function draw(timePassed) {
-            totalValue.textContent = timePassed / 5 + 'px';
+            totalValue.textContent = timePassed / 5;
         }
     };
 
