@@ -179,11 +179,14 @@ const sendForm = () => {
 
             throw new Error("Status is not OK");
           } else {
-            // ...
             setTimeout(() => {
                 document.querySelector(".preloader__container").style.display =
                   "none";
+                  statusMessage.textContent = successMessage;
               }, 3000);
+              setTimeout(() => {
+                  statusMessage.remove();
+              }, 8000);
 
           }
         })
