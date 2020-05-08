@@ -8,7 +8,6 @@ const calcBlock = document.querySelector(".calc-block"),
 
     const countSum = () => {
     let total = 0,
-        countAnimate = 0,
         countValue = 1,
         dayValue = 1;
     const typeValue = +calcType.options[calcType.selectedIndex].value,
@@ -35,8 +34,9 @@ const calcBlock = document.querySelector(".calc-block"),
         let timer = setInterval(function() {
         let timePassed = Date.now() - start;
 
-        if (timePassed >= 2000) {
+        if (timePassed >= 1000) {
             clearInterval(timer); //? закончить анимацию через 2 секунды
+            totalValue.textContent = total;
             return;
         }
 
@@ -44,14 +44,17 @@ const calcBlock = document.querySelector(".calc-block"),
         draw(timePassed);
 
         }, 20);
+        console.log(total);
 
         function draw(timePassed) {
-            totalValue.textContent = timePassed / 5;
+            totalValue.textContent = timePassed ;
+            
+            
         }
     };
 
     if (typeValue && squareValue) {
-      total = price * typeValue * squareValue * countValue * dayValue;
+        total = price * typeValue * squareValue * countValue * dayValue;
         animateTotal();
         totalValue.textContent = total;
     }
