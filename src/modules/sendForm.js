@@ -172,16 +172,18 @@ const sendForm = () => {
         .then((outputData) => {
           if (outputData.status !== 200) {
             setTimeout(() => {
-              document.querySelector(".preloader__container").style.display =
-                "none";
+              loaderHtml.remove();
             }, 3000);
-            loaderHtml.remove();
+
+            setTimeout(() => {
+              statusMessage.remove();
+            }, 8000);
+            
 
             throw new Error("Status is not OK");
           } else {
             setTimeout(() => {
-                document.querySelector(".preloader__container").style.display =
-                  "none";
+                  loaderHtml.remove();
                   statusMessage.textContent = successMessage;
               }, 3000);
               setTimeout(() => {
