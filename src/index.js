@@ -9,6 +9,7 @@ import "formdata-polyfill";
 import "es6-promise";
 import "es6-promise";
 import "fetch-polyfill"
+import "remove-polyfill"
 
 //? Подключение основных модулей
 import countTimer from './modules/countTimer';
