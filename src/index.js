@@ -22,6 +22,7 @@ import checkInputNum from './modules/checkInputNum';
 import checkInputWord from './modules/checkInputWord';
 import calc from './modules/calc';
 import sendForm from './modules/sendForm';
+import scrollId from './modules/scrollId';
 
 
 //? Обратный отсчет
@@ -29,6 +30,9 @@ countTimer();
 
 //?Меню
 toggleMenu();
+
+//? Скрол 
+scrollId();
 
 //?popup
 togglePopup();
