@@ -28,38 +28,30 @@ const calc = (price = 100) => {
         }
 
         //Анимация для калькулятора
-        const animateTotal = () => {
-            let start = Date.now(); //? Начало анимации
-
-            let timer = setInterval(() => {
-                let timePassed = Date.now() - start;
-
-                if (timePassed >= 1000) {
-                    clearInterval(timer); //? закончить анимацию через 1 секунду
-                    totalValue.textContent = total;
-                    return;
-                }
-
-                // отрисовать анимацию на момент timePassed, прошедший с начала анимации
-                draw(timePassed);
-
-            }, 20);
-            console.log(total);
-
-            function draw(timePassed) {
-                totalValue.textContent = timePassed ;
-            }
-        };
+        const animateTotal = (elem, from, to, duration) => {
+            
+            const start = Date.now();
+            let timerId = setTimeout(function tick() {
+              let now = Date.now() - start;
+              let progress = now / duration;
+              let result = Math.floor((to - from) * progress + from);
+              elem.innerText = progress < 1 ? result : to;
+              if (progress < 1) timerId = setTimeout(tick, 10);
+            }, 10);
+          };
 
         if (typeValue && squareValue) {
             total = price * typeValue * squareValue * countValue * dayValue;
             total = parseInt(total);
-             animateTotal();
+            animateTotal(totalValue, 0, total, 1000);
             totalValue.textContent = total;
         }
 
         totalValue.textContent = total;
         };
+
+
+        
         calcBlock.addEventListener("change", (event) => {
         const target = event.target;
         
