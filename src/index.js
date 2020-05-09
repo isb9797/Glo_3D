@@ -25,7 +25,7 @@ import sendForm from './modules/sendForm';
 
 
 //? Обратный отсчет
-countTimer("30 june 2020");
+countTimer();
 
 //?Меню
 toggleMenu();

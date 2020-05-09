@@ -1,7 +1,12 @@
-const countTimer = (deadline) => {
+const countTimer = (/* deadline */) => {
     const timerHours = document.querySelector("#timer-hours"),
         timerMinutes = document.querySelector("#timer-minutes"),
-        timerSeconds = document.querySelector("#timer-seconds");
+        timerSeconds = document.querySelector("#timer-seconds"),
+        tomorrow = new Date();
+
+    //? Сброс времени до следующих суток
+    tomorrow.setDate(tomorrow.getDate()+1);
+    let deadline = new Date((tomorrow.getMonth()+1)+','+tomorrow.getDate()+','+tomorrow.getFullYear()+',00:00:00');
 
     function getTimeRemaining() {
         const dateStop = new Date(deadline).getTime(),
